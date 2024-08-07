@@ -1,0 +1,1 @@
+epoch:1, utility:0.0, fairness:0.0epoch:2, utility:0.0, fairness:0.0epoch:3, utility:0.0, fairness:0.0
