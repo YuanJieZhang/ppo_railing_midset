@@ -6,7 +6,7 @@
 """
 
 import torch
-from algorithms.algorithm.r_actor_critic import R_Actor, R_Critic
+from algorithms.algorithm.r_actor_critic import R_Actor, R_Critic,R_Actor_with_new_module
 from utils.util import update_linear_schedule
 
 
@@ -32,7 +32,7 @@ class RMAPPOPolicy:
         self.share_obs_space = cent_obs_space
         self.act_space = act_space
 
-        self.actor = R_Actor(args, self.obs_space, self.act_space, self.device)
+        self.actor = R_Actor_with_new_module(args, self.obs_space, self.act_space, self.device)
         self.critic = R_Critic(args, self.share_obs_space, self.device)
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),
