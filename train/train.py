@@ -175,4 +175,4 @@ def main(args,select):
 
 if __name__ == "__main__":
 
-        main(sys.argv[1:],0)
+        main(sys.argv[1:],2)

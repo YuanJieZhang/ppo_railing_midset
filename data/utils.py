@@ -129,7 +129,3 @@ def generate_npy():
     file_path = project_dir + '/data/init_location.npy'
     np.save(file_path,random_ints)
 
-
-print(load_budget())
-(load_location())
-load_location()
