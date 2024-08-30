@@ -22,7 +22,6 @@ from data.utils import create_graph
 from data.utils import import_requests_from_csv
 from data.utils import Driver
 from data.utils import choose_random_node
-from data.utils import load_budget
 from data.utils import load_location
 
 
