@@ -23,6 +23,7 @@ from data.utils import import_requests_from_csv
 from data.utils import Driver
 from data.utils import choose_random_node
 from data.utils import load_location
+from data.converter import Mapping
 
 
 class TopEnvironmentW_8:
@@ -152,8 +153,8 @@ class TopEnvironmentW_8:
         select_actions = []
         reward = 0
         action_onehot = action[0]
-        select_action_to = action_onehot.tolist().index(1) + 4999
-        if select_action_to >= 10000 :
+        select_action_to = Mapping[action_onehot.tolist().index(1)]
+        if select_action_to >= 5000:
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
 

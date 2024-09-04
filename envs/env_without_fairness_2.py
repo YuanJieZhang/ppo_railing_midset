@@ -21,7 +21,7 @@ from matplotlib import animation
 from data.utils import create_graph
 from data.utils import import_requests_from_csv
 from data.utils import Driver
-from data.utils import choose_random_node
+from data.converter import Mapping
 from data.utils import load_location
 
 
@@ -43,7 +43,7 @@ class TopEnvironmentW_2:
             driver.idx = idx
             driver.money = 0
             driver.speed = 5000
-            driver.start_time=0
+            driver.start_time = 0
         self.start_time = start_time
         self.timestep = timestep
         self.final_time = final_time
@@ -59,7 +59,7 @@ class TopEnvironmentW_2:
         self.fairness = []
         self.utility = [[]]
         self.epoch = 0
-        self.gamma=1
+        self.gamma = 1
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output2.txt'
         self.file = open(data_dir, 'w')
@@ -82,7 +82,7 @@ class TopEnvironmentW_2:
             driver.on_road = self.FREE
             driver.money = 0
             driver.pos = self.init_pos[i]
-            driver.start_time=0
+            driver.start_time = 0
 
             i += 1  # 随机选择一个位置
 
@@ -113,12 +113,12 @@ class TopEnvironmentW_2:
                 if (self.graph.get_edge_data(driver.Request.origin, driver.Request.destination)["distance"] +
                     self.graph.get_edge_data(driver.pos,
                                              driver.Request.origin)[
-                        "distance"]) / driver.speed <= self.time-driver.start_time:
+                        "distance"]) / driver.speed <= self.time - driver.start_time:
                     driver.on_road = 0
                     self.order_count += 1
                     driver.Request.state = 1
                     driver.pos = driver.Request.destination
-                    driver.start_time=self.time
+                    driver.start_time = self.time
         sorted_drivers = sorted(self.drivers, key=lambda d: d.money)
         # sort 目的地
         reward_list = []
@@ -137,9 +137,12 @@ class TopEnvironmentW_2:
         self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
         std_dev = statistics.stdev(reward_list)
-        after_reward_list = [x - (std_dev)/10 for x in reward_list]
-        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum()*self.gamma, self._filter_beta()/self.gamma)
-        wandb.log({'epoch': self.epoch, 'step':self.step_count,'utility': self._filter_sum(), 'fairness': self._filter_beta()})
+        after_reward_list = [x - (std_dev) / 25 for x in reward_list]
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch, self.step_count,
+                                                                     self._filter_sum() * self.gamma,
+                                                                     self._filter_beta() / self.gamma)
+        wandb.log({'epoch': self.epoch, 'step': self.step_count, 'utility': self._filter_sum(),
+                   'fairness': self._filter_beta()})
         print(msg)
         self.file.write(msg)
         return self._state(), after_reward_list, end_list, {}
@@ -149,8 +152,8 @@ class TopEnvironmentW_2:
         select_actions = []
         reward = 0
         action_onehot = action[0]
-        select_action_to = action_onehot.tolist().index(1) + 4999
-        if select_action_to >= 10000 :
+        select_action_to = Mapping[action_onehot.tolist().index(1)]
+        if select_action_to >= 5000:
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
 
@@ -189,7 +192,6 @@ class TopEnvironmentW_2:
         for driver in self.drivers:
             reward_list.append(driver.money)
         return sum(reward_list)
-
 
     # def test(self):
     #     ("Testing environment with {} agents".format(self.agent_num))
