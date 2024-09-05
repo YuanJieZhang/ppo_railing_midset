@@ -152,10 +152,9 @@ class TopEnvironmentW_2:
         select_actions = []
         reward = 0
         action_onehot = action[0]
-        select_action_to = Mapping[action_onehot.tolist().index(1)]
-        if select_action_to >= 5000:
+        if action_onehot.tolist().index(1) >= 5000:
             return self._state(), reward, self.done, {}
-        node_idx = select_action_to
+        node_idx = Mapping[action_onehot.tolist().index(1)]
 
         if self.drivers[action[1]].on_road == 0:
             for r in self.requests:
