@@ -16,6 +16,8 @@ from heapq import heappush, heappop, nsmallest
 from tqdm import tqdm
 
 from matplotlib import animation
+
+from data.converter import Mapping
 from data.utils import create_graph
 from data.utils import import_requests_from_csv
 from data.utils import Driver
@@ -154,18 +156,18 @@ class TopEnvironmentW:
 
     def single_step(self, action):
         # action把他变成司机->request的形式传入step
+
         select_actions = []
         reward = 0
         action_onehot = action[0]
-        select_action_to = action_onehot.tolist().index(1) + 9999
-        if select_action_to >= 20000 :
+        node_idx = Mapping[action_onehot.tolist().index(1)]
+        if action_onehot.tolist().index(1) >= 5000:
             return self._state(), reward, self.done, {}
         if self.driver_E_fairness(
-                select_action_to, action[1]) > self._beta()*self.factor:
+                node_idx, action[1]) > self._beta()*self.factor:
             if self.step_count > 100:
                 self.factor *= 1.05
             return self._state(), reward, self.done, {}
-        node_idx = select_action_to
 
         if self.drivers[action[1]].on_road == 0:
             for r in self.requests:
@@ -182,6 +184,7 @@ class TopEnvironmentW:
                     self.drivers[action[1]].money += reward
                     self.drivers[action[1]].on_road = 1
                     self.drivers[action[1]].Request = aim_action
+                    self.factor=1
                     break
 
         if self.order_count >= self.max_count:
