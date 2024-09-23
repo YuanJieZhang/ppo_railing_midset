@@ -226,7 +226,7 @@ class TopEnvironmentW:
             return 100000000
         if self.step_count >= len(self.beta)-1:
             return max(self.beta)
-        return self.beta[self.step_count]
+        return self.beta[self.step_count] / 2
 
     def _filter_sum(self):
         reward_list = []
