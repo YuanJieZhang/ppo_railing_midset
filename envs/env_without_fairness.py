@@ -45,7 +45,7 @@ class TopEnvironmentW:
             driver.idx = idx
             driver.money = 0
             driver.speed = 5000
-            driver.start_time=0
+            driver.start_time = 0
 
         self.start_time = start_time
         self.timestep = timestep
@@ -87,7 +87,7 @@ class TopEnvironmentW:
             driver.on_road = self.FREE
             driver.money = 0
             driver.pos = self.init_pos[i]
-            driver.start_time=0
+            driver.start_time = 0
 
             i += 1  # 随机选择一个位置
 
@@ -101,7 +101,7 @@ class TopEnvironmentW:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
-        self.factor=1
+        self.factor = 1
         msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
         print(msg)
         self.file.write(msg)
@@ -125,12 +125,12 @@ class TopEnvironmentW:
                 if (self.graph.get_edge_data(driver.Request.origin, driver.Request.destination)["distance"] +
                     self.graph.get_edge_data(driver.pos,
                                              driver.Request.origin)[
-                        "distance"]) / driver.speed <= self.time-driver.start_time:
+                        "distance"]) / driver.speed <= self.time - driver.start_time:
                     driver.on_road = 0
                     self.order_count += 1
                     driver.Request.state = 1
                     driver.pos = driver.Request.destination
-                    driver.start_time=self.time
+                    driver.start_time = self.time
         sorted_drivers = sorted(self.drivers, key=lambda d: d.money)
         # sort 目的地
         reward_list = []
@@ -148,8 +148,11 @@ class TopEnvironmentW:
         vec = np.array(reward_list).reshape((1, self.agent_num))
         self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
-        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
-        wandb.log({'epoch': self.epoch,'step':self.step_count, 'utility': self._filter_sum(), 'fairness': self._filter_beta()})
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch, self.step_count,
+                                                                              self._filter_sum(), self._filter_beta(),
+                                                                              self._beta())
+        wandb.log({'epoch': self.epoch, 'step': self.step_count, 'utility': self._filter_sum(),
+                   'fairness': self._filter_beta()})
         print(msg)
         self.file.write(msg)
         return self._state(), reward_list, end_list, {}
@@ -164,7 +167,7 @@ class TopEnvironmentW:
         if action_onehot.tolist().index(1) >= 5000:
             return self._state(), reward, self.done, {}
         if self.driver_E_fairness(
-                node_idx, action[1]) > self._beta()*self.factor:
+                node_idx, action[1]) > self._beta() * self.factor:
             if self.step_count > 100:
                 self.factor *= 1.05
             return self._state(), reward, self.done, {}
@@ -184,7 +187,7 @@ class TopEnvironmentW:
                     self.drivers[action[1]].money += reward
                     self.drivers[action[1]].on_road = 1
                     self.drivers[action[1]].Request = aim_action
-                    self.factor=1
+                    self.factor = 1
                     break
 
         if self.order_count >= self.max_count:
@@ -224,8 +227,10 @@ class TopEnvironmentW:
     def _beta(self):
         if self.epoch < 100:
             return 100000000
-        if self.step_count >= len(self.beta)-1:
+        if self.step_count >= len(self.beta) - 1:
             return max(self.beta)
+        if self.beta[self.step_count] < 10000:
+            self.beta[self.step_count] = 100000
         return self.beta[self.step_count] / 2
 
     def _filter_sum(self):
