@@ -36,7 +36,7 @@ class TopEnvironmentW:
         # 新增变量和初始化
         self.agent_num = drivers_num
         self.obs_dim = 4
-        self.action_dim = 5001
+        self.action_dim = 5000
         self.drivers = []
         for i in range(self.agent_num):
             self.drivers.append(Driver(0))
