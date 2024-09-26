@@ -68,7 +68,7 @@ class TopEnvironmentW:
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output0.txt'
         self.file = open(data_dir, 'w')
-        wandb.init(project='ppo_experiment_0')
+        wandb.init(project='ppo_experiment_0_40version')
 
     def _generate_observation(self):
         state = np.zeros((self.agent_num, self.obs_dim))
