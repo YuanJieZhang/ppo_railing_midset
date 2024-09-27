@@ -149,7 +149,7 @@ class TopEnvironmentW:
         self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
         std_dev = statistics.stdev(reward_list)
-        after_reward_list = [x - (std_dev) / 15 for x in reward_list]
+        after_reward_list = [x - (std_dev)  for x in reward_list]
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch, self.step_count,
                                                                               self._filter_sum(), self._filter_beta(),
                                                                               self._beta())
@@ -227,8 +227,6 @@ class TopEnvironmentW:
         return 0
 
     def _beta(self):
-        if self.epoch < 40:
-            return 100000000
         if self.step_count >= len(self.beta) - 1:
             return max(self.beta)
         if self.beta[self.step_count] < 10000:
